@@ -197,8 +197,22 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      background: var(--bg);
       overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: url('./static/fwb.png') center center / cover no-repeat;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center 40%, rgba(28,28,30,0.4) 0%, rgba(28,28,30,0.75) 50%, rgba(28,28,30,0.95) 100%);
     }
 
     .hero-content {
@@ -212,18 +226,11 @@
       padding-top: 80px;
     }
 
-    .hero-image {
-      max-width: 350px;
-      width: 100%;
-      animation: goldPulse 4s ease-in-out infinite;
-    }
-
     .hero-title {
       font-family: var(--font-display);
       font-size: clamp(4rem, 10vw, 7rem);
       font-weight: 700;
       color: var(--text-primary);
-      margin-top: 2rem;
       animation: fadeInUp 1.5s ease forwards;
     }
 
@@ -560,8 +567,8 @@
         font-size: 0.65rem;
       }
 
-      .hero-image {
-        max-width: 250px;
+      .hero-title {
+        font-size: clamp(3rem, 10vw, 7rem);
       }
 
       .hero-buttons {
@@ -612,8 +619,9 @@
 
   <!-- HERO -->
   <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
     <div class="hero-content">
-      <img src="./static/fwb.png" alt="feels character" class="hero-image">
       <h1 class="hero-title">feels<span class="dot">.</span></h1>
       <p class="hero-tagline">you know the feeling.</p>
       <div class="hero-buttons">
