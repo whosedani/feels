@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>feels. — admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1C1C1E;
+      --bg-surface: #2A2A2E;
+      --border: rgba(255, 255, 255, 0.06);
+      --gold: #D4A847;
+      --gold-bright: #F0C95C;
+      --text-primary: #E0E0E0;
+      --text-secondary: #8A8A8E;
+      --text-muted: #5A5A5E;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .admin-panel {
+      max-width: 480px;
+      width: 100%;
+    }
+
+    .admin-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .admin-title .dot { color: var(--gold); }
+
+    .admin-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+
+    .field {
+      margin-bottom: 1.5rem;
+    }
+
+    .field label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .field input:focus {
+      border-color: var(--gold);
+    }
+
+    .field input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .btn-save {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--gold);
+      color: var(--bg);
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 1rem;
+    }
+
+    .btn-save:hover { background: var(--gold-bright); }
+
+    .status {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      min-height: 1.2rem;
+    }
+
+    .status.success { color: var(--gold); }
+    .status.error { color: #e05555; }
+  </style>
+</head>
+<body>
+
+  <div class="admin-panel">
+    <h1 class="admin-title">feels<span class="dot">.</span> admin</h1>
+    <p class="admin-sub">update site configuration</p>
+
+    <div class="field">
+      <label>Contract Address</label>
+      <input type="text" id="ca" placeholder="Paste CA">
+    </div>
+
+    <div class="field">
+      <label>Twitter URL</label>
+      <input type="text" id="twitterUrl" placeholder="https://twitter.com/...">
+    </div>
+
+    <div class="field">
+      <label>Community URL</label>
+      <input type="text" id="communityUrl" placeholder="https://twitter.com/i/communities/...">
+    </div>
+
+    <div class="field">
+      <label>Buy URL</label>
+      <input type="text" id="buyUrl" placeholder="https://jup.ag/swap/SOL-...">
+    </div>
+
+    <div class="field">
+      <label>Tweet Embed ID</label>
+      <input type="text" id="tweetEmbedId" placeholder="Tweet ID for embed">
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Admin password">
+    </div>
+
+    <button class="btn-save" onclick="saveConfig()">Save</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <script>
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            if (data.ca) document.getElementById('ca').value = data.ca;
+            if (data.twitterUrl) document.getElementById('twitterUrl').value = data.twitterUrl;
+            if (data.communityUrl) document.getElementById('communityUrl').value = data.communityUrl;
+            if (data.buyUrl) document.getElementById('buyUrl').value = data.buyUrl;
+            if (data.tweetEmbedId) document.getElementById('tweetEmbedId').value = data.tweetEmbedId;
+          }
+        }
+      } catch (e) {
+        // silent
+      }
+    }
+
+    function showStatus(msg, type) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = 'status ' + type;
+      setTimeout(() => { el.textContent = ''; el.className = 'status'; }, 3000);
+    }
+
+    async function saveConfig() {
+      const password = document.getElementById('password').value;
+      if (!password) {
+        showStatus('enter password', 'error');
+        return;
+      }
+
+      const encoder = new TextEncoder();
+      const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(password));
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      const configData = {
+        passwordHash,
+        ca: document.getElementById('ca').value,
+        twitterUrl: document.getElementById('twitterUrl').value,
+        communityUrl: document.getElementById('communityUrl').value,
+        buyUrl: document.getElementById('buyUrl').value,
+        tweetEmbedId: document.getElementById('tweetEmbedId').value,
+      };
+
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(configData)
+        });
+
+        if (res.ok) showStatus('saved', 'success');
+        else if (res.status === 401) showStatus('wrong password', 'error');
+        else showStatus('failed to save', 'error');
+      } catch (e) {
+        showStatus('connection error', 'error');
+      }
+    }
+
+    loadConfig();
+  </script>
+
+</body>
+</html>

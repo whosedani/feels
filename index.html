@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$feels — you know the feeling.</title>
+  <meta name="description" content="$feels on Solana. how it feels when everything falls apart.">
+  <link rel="icon" href="./static/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1C1C1E;
+      --bg-light: #222226;
+      --bg-surface: #2A2A2E;
+      --concrete: #3A3A3E;
+      --concrete-light: #4A4A4E;
+      --border: rgba(255, 255, 255, 0.06);
+      --gold: #D4A847;
+      --gold-bright: #F0C95C;
+      --gold-dim: #B08A30;
+      --gold-glow: rgba(212, 168, 71, 0.25);
+      --gold-glow-soft: rgba(212, 168, 71, 0.08);
+      --rain: rgba(255, 255, 255, 0.04);
+      --rain-drop: rgba(255, 255, 255, 0.08);
+      --text-primary: #E0E0E0;
+      --text-secondary: #8A8A8E;
+      --text-muted: #5A5A5E;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ========== RAIN ========== */
+    #rain-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .rain-drop {
+      position: fixed;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(255,255,255,0.07), transparent);
+      pointer-events: none;
+      animation: rainFall linear infinite;
+    }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes rainFall {
+      0% { transform: translateY(-20px); }
+      100% { transform: translateY(100vh); }
+    }
+
+    @keyframes goldPulse {
+      0%, 100% { filter: drop-shadow(0 0 60px rgba(212,168,71,0.25)) drop-shadow(0 0 120px rgba(212,168,71,0.12)); }
+      50% { filter: drop-shadow(0 0 80px rgba(212,168,71,0.4)) drop-shadow(0 0 140px rgba(212,168,71,0.2)); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrollHint {
+      0%, 100% { opacity: 0.3; transform: translateY(0); }
+      50% { opacity: 0.8; transform: translateY(6px); }
+    }
+
+    /* ========== NAV ========== */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(28, 28, 30, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .nav-logo .dot { color: var(--gold); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      border-radius: 8px;
+      padding: 0.4rem 1rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--gold);
+      color: var(--text-primary);
+    }
+
+    .nav-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .nav-ca {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .nav-icon-btn {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+    }
+
+    /* ========== TOAST ========== */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      background: var(--gold);
+      color: var(--bg);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0.6rem 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 1.5rem;
+      padding-top: 80px;
+    }
+
+    .hero-image {
+      max-width: 350px;
+      width: 100%;
+      animation: goldPulse 4s ease-in-out infinite;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(4rem, 10vw, 7rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 2rem;
+      animation: fadeInUp 1.5s ease forwards;
+    }
+
+    .hero-title .dot { color: var(--gold); }
+
+    .hero-tagline {
+      font-family: var(--font-body);
+      font-weight: 300;
+      font-size: clamp(0.9rem, 2vw, 1.2rem);
+      color: var(--text-secondary);
+      letter-spacing: 2px;
+      opacity: 0;
+      animation: fadeInUp 1.5s ease 0.6s forwards;
+    }
+
+    .hero-buttons {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      position: relative;
+      z-index: 10;
+      opacity: 0;
+      animation: fadeInUp 1.5s ease 1s forwards;
+    }
+
+    .btn-buy {
+      background: var(--gold);
+      color: var(--bg);
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-buy:hover { background: var(--gold-bright); }
+
+    .btn-icon {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.3s;
+      text-decoration: none;
+      color: var(--text-secondary);
+    }
+
+    .btn-icon:hover { border-color: var(--gold); }
+
+    .btn-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      color: var(--text-muted);
+      animation: scrollHint 3s ease-in-out infinite;
+    }
+
+    .scroll-indicator svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* ========== TWEET EMBED ========== */
+    .tweet-section {
+      padding: 4rem 0;
+      background: var(--bg);
+    }
+
+    .tweet-container {
+      max-width: 550px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .tweet-wrapper {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1.2s ease, transform 1.2s ease;
+    }
+
+    .tweet-wrapper.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ========== FEELS GALLERY ========== */
+    .feels-gallery {
+      padding: 5rem 0;
+      background: var(--bg-light);
+    }
+
+    .feels-gallery-inner {
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .feels-block {
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+
+    .feels-block:last-child {
+      border-bottom: none;
+    }
+
+    .feels-block.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feels-label {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .feels-phrase {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    /* ========== HOW TO BUY ========== */
+    .how-to-buy {
+      padding: 6rem 0;
+      background: var(--bg);
+    }
+
+    .how-to-buy-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .section-label {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .buy-step {
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+
+    .buy-step:last-child { border-bottom: none; }
+
+    .buy-step.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .step-number {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      min-width: 30px;
+    }
+
+    .step-content {}
+
+    .step-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-desc {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .step-desc a {
+      color: var(--gold);
+      text-decoration: none;
+      position: relative;
+      z-index: 10;
+    }
+
+    .step-desc a:hover {
+      color: var(--gold-bright);
+    }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      min-height: 40vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .footer-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .footer-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(28,28,30,0.95) 0%, rgba(28,28,30,0.5) 50%, rgba(28,28,30,0.7) 100%);
+    }
+
+    .footer-content {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+    }
+
+    .footer-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 600;
+      color: var(--text-secondary);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1.5s ease, transform 1.5s ease;
+    }
+
+    .footer-title.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .footer-title .dot { color: var(--gold); }
+
+    .footer-links {
+      margin-top: 2rem;
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .footer-link {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.3s;
+      position: relative;
+      z-index: 10;
+    }
+
+    .footer-link:hover { color: var(--gold); }
+
+    .footer-bottom {
+      margin-top: 3rem;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    /* ========== MOBILE ========== */
+    @media (max-width: 768px) {
+      .nav {
+        padding: 0.8rem 1rem;
+      }
+
+      .nav-ca {
+        max-width: 80px;
+        font-size: 0.65rem;
+      }
+
+      .hero-image {
+        max-width: 250px;
+      }
+
+      .hero-buttons {
+        gap: 0.75rem;
+      }
+
+      .feels-gallery {
+        padding: 4rem 0;
+      }
+
+      .feels-phrase {
+        font-size: 1.2rem;
+      }
+
+      .how-to-buy {
+        padding: 4rem 0;
+      }
+
+      .footer-links {
+        gap: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- RAIN -->
+  <div id="rain-container"></div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">Copied!</div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="#" class="nav-logo">feels<span class="dot">.</span></a>
+    <div class="nav-actions">
+      <button class="nav-btn nav-ca" id="nav-ca" title="Copy CA">
+        PASTE_CONTRACT_ADDRESS_HERE
+      </button>
+      <a href="#" class="nav-btn nav-icon-btn" id="nav-twitter" target="_blank" rel="noopener" title="Twitter">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+      <a href="#" class="nav-btn nav-icon-btn" id="nav-community" target="_blank" rel="noopener" title="Community">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <img src="./static/feels.png" alt="feels character" class="hero-image">
+      <h1 class="hero-title">feels<span class="dot">.</span></h1>
+      <p class="hero-tagline">you know the feeling.</p>
+      <div class="hero-buttons">
+        <a href="#" class="btn-buy" id="btn-buy">BUY $FEELS</a>
+        <a href="#" class="btn-icon" id="hero-twitter" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="https://dexscreener.com" class="btn-icon" target="_blank" rel="noopener" title="Chart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </section>
+
+  <!-- TWEET EMBED -->
+  <section class="tweet-section">
+    <div class="tweet-container">
+      <div class="tweet-wrapper" id="tweet-wrapper">
+        <blockquote class="twitter-tweet" data-theme="dark" id="tweet-embed">
+          <a href="https://twitter.com/x/status/PASTE_TWEET_ID_HERE"></a>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEELS GALLERY -->
+  <section class="feels-gallery">
+    <div class="feels-gallery-inner" id="feels-gallery">
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">you get rugged 3 times in a row and still open pump.fun</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">you check the bubble map after buying and it's all one cluster</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">dev deletes the twitter 2 minutes after launch</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">you realize you were the exit liquidity the whole time</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">your 100x conviction play turns into a -98%</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">you watch a token pump 5 minutes after you sold</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">the chart was flat for 2 hours and you still watched every second</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">you ape a token because the pfp looked trustworthy</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">you tell yourself 'last trade of the night' at 1am and it's now 5am</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">someone in the CT replies says 'told you' after the rug</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">you refresh dexscreener 47 times and the chart moved 0.2%</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">the dev's wallet is the entire bubble map and you bought anyway</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">everything you do for a living claude does for free now</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">you explain to your family what you do and they still don't get it</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">your portfolio is your personality and both are down bad</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">you realize the only notifications you get are from dexscreener</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">someone asks what your plans are and the honest answer is 'watching charts'</div>
+      </div>
+
+      <div class="feels-block">
+        <div class="feels-label">how it feels when</div>
+        <div class="feels-phrase">you open your wallet and the balance is a phone number. from a small country.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HOW TO BUY -->
+  <section class="how-to-buy">
+    <div class="how-to-buy-inner">
+      <div class="section-label">start</div>
+      <h2 class="section-title">How To Buy $feels</h2>
+
+      <div class="buy-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">Create a Wallet</div>
+          <div class="step-desc">Download <a href="https://phantom.app" target="_blank" rel="noopener">Phantom</a> or <a href="https://solflare.com" target="_blank" rel="noopener">Solflare</a>. You'll need it for what comes next.</div>
+        </div>
+      </div>
+
+      <div class="buy-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">Get SOL</div>
+          <div class="step-desc">Buy SOL on any exchange. Send it to your wallet.</div>
+        </div>
+      </div>
+
+      <div class="buy-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">Open Jupiter</div>
+          <div class="step-desc">Go to <a href="https://jup.ag" target="_blank" rel="noopener">jup.ag</a>. Connect your wallet. You've done this before.</div>
+        </div>
+      </div>
+
+      <div class="buy-step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <div class="step-title">Swap for $feels</div>
+          <div class="step-desc">Paste the contract address. Swap. Welcome to the feeling.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <img src="./static/footer-bg.png" alt="" class="footer-bg">
+    <div class="footer-overlay"></div>
+    <div class="footer-content">
+      <div class="footer-title" id="footer-title">it all feels the same<span class="dot">.</span></div>
+      <div class="footer-links">
+        <a href="#" class="footer-link" id="footer-twitter">Twitter</a>
+        <a href="#" class="footer-link" id="footer-community">Community</a>
+      </div>
+      <div class="footer-bottom">feels on solana</div>
+    </div>
+  </footer>
+
+  <!-- Twitter Widget -->
+  <script async src="https://platform.twitter.com/widgets.js"></script>
+
+  <script>
+    // ========== CONFIG ==========
+    const DEFAULT_CONFIG = {
+      ca: "PASTE_CONTRACT_ADDRESS_HERE",
+      twitterUrl: "https://twitter.com/PASTE_HANDLE_HERE",
+      communityUrl: "https://twitter.com/i/communities/PASTE_ID_HERE",
+      buyUrl: "https://jup.ag/swap/SOL-PASTE_CA_HERE",
+      ticker: "feels",
+      tweetEmbedId: "PASTE_TWEET_ID_HERE"
+    };
+
+    let CONFIG = { ...DEFAULT_CONFIG };
+
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Object.keys(data).length > 0) {
+            CONFIG = { ...DEFAULT_CONFIG, ...data };
+          }
+        }
+      } catch (e) {
+        // fallback to defaults
+      }
+      applyConfig();
+    }
+
+    function applyConfig() {
+      // Nav CA
+      const navCA = document.getElementById('nav-ca');
+      if (CONFIG.ca) navCA.textContent = CONFIG.ca;
+
+      // Twitter links
+      const twitterLinks = ['nav-twitter', 'hero-twitter', 'footer-twitter'];
+      twitterLinks.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && CONFIG.twitterUrl) el.href = CONFIG.twitterUrl;
+      });
+
+      // Community links
+      const communityLinks = ['nav-community', 'footer-community'];
+      communityLinks.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && CONFIG.communityUrl) el.href = CONFIG.communityUrl;
+      });
+
+      // Buy button
+      const btnBuy = document.getElementById('btn-buy');
+      if (btnBuy && CONFIG.buyUrl) btnBuy.href = CONFIG.buyUrl;
+
+      // Tweet embed
+      if (CONFIG.tweetEmbedId && CONFIG.tweetEmbedId !== DEFAULT_CONFIG.tweetEmbedId) {
+        const tweetEmbed = document.getElementById('tweet-embed');
+        if (tweetEmbed) {
+          const link = tweetEmbed.querySelector('a');
+          if (link) link.href = `https://twitter.com/x/status/${CONFIG.tweetEmbedId}`;
+        }
+      }
+    }
+
+    // ========== RAIN ==========
+    function createRain() {
+      const container = document.getElementById('rain-container');
+      const dropCount = 50;
+
+      for (let i = 0; i < dropCount; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'rain-drop';
+        const left = Math.random() * 100;
+        const duration = 0.6 + Math.random() * 0.6;
+        const delay = Math.random() * 2;
+        const height = 15 + Math.random() * 15;
+
+        drop.style.left = left + '%';
+        drop.style.height = height + 'px';
+        drop.style.animationDuration = duration + 's';
+        drop.style.animationDelay = delay + 's';
+
+        container.appendChild(drop);
+      }
+    }
+
+    // ========== SCROLL REVEAL ==========
+    function setupScrollReveal() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const delay = entry.target.dataset.delay || 0;
+            setTimeout(() => {
+              entry.target.classList.add('revealed');
+            }, delay);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      // Feels blocks — staggered
+      document.querySelectorAll('.feels-block').forEach((block, i) => {
+        block.dataset.delay = i * 80;
+        observer.observe(block);
+      });
+
+      // Buy steps — staggered
+      document.querySelectorAll('.buy-step').forEach((step, i) => {
+        step.dataset.delay = i * 120;
+        observer.observe(step);
+      });
+
+      // Tweet wrapper
+      const tweetWrapper = document.getElementById('tweet-wrapper');
+      if (tweetWrapper) observer.observe(tweetWrapper);
+
+      // Footer title
+      const footerTitle = document.getElementById('footer-title');
+      if (footerTitle) observer.observe(footerTitle);
+    }
+
+    // ========== CA COPY ==========
+    function setupCACopy() {
+      const navCA = document.getElementById('nav-ca');
+      const toast = document.getElementById('toast');
+
+      navCA.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(CONFIG.ca || DEFAULT_CONFIG.ca);
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 1500);
+        } catch (e) {
+          // fallback
+          const textArea = document.createElement('textarea');
+          textArea.value = CONFIG.ca || DEFAULT_CONFIG.ca;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 1500);
+        }
+      });
+    }
+
+    // ========== INIT ==========
+    document.addEventListener('DOMContentLoaded', () => {
+      createRain();
+      setupScrollReveal();
+      setupCACopy();
+      loadConfig();
+    });
+  </script>
+
+</body>
+</html>
