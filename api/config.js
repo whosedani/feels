@@ -1,4 +1,9 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -9,7 +14,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const config = await kv.get('site-config');
+      const config = await redis.get('site-config');
       return res.status(200).json(config || {});
     } catch (error) {
       console.error('Redis GET error:', error);
@@ -23,7 +28,7 @@ export default async function handler(req, res) {
       if (!passwordHash || passwordHash !== process.env.ADMIN_HASH) {
         return res.status(401).json({ error: 'Unauthorized' });
       }
-      await kv.set('site-config', configData);
+      await redis.set('site-config', configData);
       return res.status(200).json({ success: true });
     } catch (error) {
       console.error('Redis POST error:', error);
