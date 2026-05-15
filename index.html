@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>$feels — you know the feeling.</title>
-  <meta name="description" content="$feels on Solana. how it feels when everything falls apart.">
+  <title>$life — how life felt before AI</title>
+  <meta name="description" content="$life on Solana. how life felt before AI.">
   <link rel="icon" href="./static/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -318,20 +318,19 @@
       stroke-width: 2;
     }
 
-    /* ========== TWEET EMBED ========== */
-    .tweet-section {
+    /* ========== REDDIT EMBED ========== */
+    .reddit-section {
       padding: 4rem 0;
       background: var(--bg);
     }
 
-    .tweet-container {
-      max-width: 550px;
+    .reddit-container {
+      max-width: 640px;
       margin: 0 auto;
       padding: 0 1.5rem;
     }
 
-    .tweet-wrapper {
-      border: 1px solid var(--border);
+    .reddit-wrapper {
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
@@ -340,24 +339,24 @@
       transition: opacity 1.2s ease, transform 1.2s ease;
     }
 
-    .tweet-wrapper.revealed {
+    .reddit-wrapper.revealed {
       opacity: 1;
       transform: translateY(0);
     }
 
-    /* ========== FEELS GALLERY ========== */
-    .feels-gallery {
+    /* ========== TWEETS LIST ========== */
+    .tweets-list {
       padding: 5rem 0;
       background: var(--bg-light);
     }
 
-    .feels-gallery-inner {
-      max-width: 750px;
+    .tweets-list-inner {
+      max-width: 600px;
       margin: 0 auto;
       padding: 0 1.5rem;
     }
 
-    .feels-block {
+    .tweet-block {
       padding: 2.5rem 0;
       border-bottom: 1px solid var(--border);
       opacity: 0;
@@ -365,30 +364,31 @@
       transition: opacity 1s ease-out, transform 1s ease-out;
     }
 
-    .feels-block:last-child {
+    .tweet-block:last-child {
       border-bottom: none;
     }
 
-    .feels-block.revealed {
+    .tweet-block.revealed {
       opacity: 1;
       transform: translateY(0);
     }
 
-    .feels-label {
+    .tweet-block-label {
       font-family: var(--font-body);
       font-size: 0.8rem;
       color: var(--text-muted);
       letter-spacing: 2px;
       text-transform: uppercase;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1.25rem;
     }
 
-    .feels-phrase {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      line-height: 1.5;
+    .tweet-block-embed {
+      display: flex;
+      justify-content: center;
+    }
+
+    .tweet-block-embed .twitter-tweet {
+      margin: 0 auto !important;
     }
 
     /* ========== HOW TO BUY ========== */
@@ -575,12 +575,8 @@
         gap: 0.75rem;
       }
 
-      .feels-gallery {
+      .tweets-list {
         padding: 4rem 0;
-      }
-
-      .feels-phrase {
-        font-size: 1.2rem;
       }
 
       .how-to-buy {
@@ -603,7 +599,7 @@
 
   <!-- NAV -->
   <nav class="nav">
-    <a href="#" class="nav-logo">feels<span class="dot">.</span></a>
+    <a href="#" class="nav-logo">life<span class="dot">.</span></a>
     <div class="nav-actions">
       <button class="nav-btn nav-ca" id="nav-ca" title="Copy CA">
         PASTE_CONTRACT_ADDRESS_HERE
@@ -622,10 +618,10 @@
     <div class="hero-bg"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1 class="hero-title">feels<span class="dot">.</span></h1>
-      <p class="hero-tagline">you know the feeling.</p>
+      <h1 class="hero-title">life<span class="dot">.</span></h1>
+      <p class="hero-tagline">how life felt before AI</p>
       <div class="hero-buttons">
-        <a href="#" class="btn-buy" id="btn-buy">BUY $FEELS</a>
+        <a href="#" class="btn-buy" id="btn-buy">BUY $LIFE</a>
         <a href="#" class="btn-icon" id="hero-twitter" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </a>
@@ -639,109 +635,73 @@
     </div>
   </section>
 
-  <!-- TWEET EMBED -->
-  <section class="tweet-section">
-    <div class="tweet-container">
-      <div class="tweet-wrapper" id="tweet-wrapper">
-        <blockquote class="twitter-tweet" data-theme="dark" id="tweet-embed">
-          <a href="https://twitter.com/x/status/2031035808308732183"></a>
+  <!-- REDDIT EMBED -->
+  <section class="reddit-section">
+    <div class="reddit-container">
+      <div class="reddit-wrapper" id="reddit-wrapper">
+        <blockquote class="reddit-embed-bq" data-embed-theme="dark" data-embed-height="500">
+          <a href="https://www.reddit.com/r/ChatGPT/comments/1tcrlbm/life_before_this_tweet/">life before this tweet</a>
         </blockquote>
       </div>
     </div>
   </section>
 
-  <!-- FEELS GALLERY -->
-  <section class="feels-gallery">
-    <div class="feels-gallery-inner" id="feels-gallery">
+  <!-- TWEETS LIST -->
+  <section class="tweets-list">
+    <div class="tweets-list-inner" id="tweets-list">
 
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">you get rugged 3 times in a row and still open pump.fun</div>
+      <div class="tweet-block">
+        <div class="tweet-block-label">How Life Felt Before AI</div>
+        <div class="tweet-block-embed">
+          <blockquote class="twitter-tweet" data-theme="dark">
+            <a href="https://twitter.com/CodeByNZ/status/2035636966801183226"></a>
+          </blockquote>
+        </div>
       </div>
 
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">you check the bubble map after buying and it's all one cluster</div>
+      <div class="tweet-block">
+        <div class="tweet-block-label">How Life Felt Before AI</div>
+        <div class="tweet-block-embed">
+          <blockquote class="twitter-tweet" data-theme="dark">
+            <a href="https://twitter.com/BoringBiz_/status/2055051286387568849"></a>
+          </blockquote>
+        </div>
       </div>
 
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">dev deletes the twitter 2 minutes after launch</div>
+      <div class="tweet-block">
+        <div class="tweet-block-label">How Life Felt Before AI</div>
+        <div class="tweet-block-embed">
+          <blockquote class="twitter-tweet" data-theme="dark">
+            <a href="https://twitter.com/naiivememe/status/2055317785136554232"></a>
+          </blockquote>
+        </div>
       </div>
 
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">you realize you were the exit liquidity the whole time</div>
+      <div class="tweet-block">
+        <div class="tweet-block-label">How Life Felt Before AI</div>
+        <div class="tweet-block-embed">
+          <blockquote class="twitter-tweet" data-theme="dark">
+            <a href="https://twitter.com/VorosTwins/status/2036070246789124180"></a>
+          </blockquote>
+        </div>
       </div>
 
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">your 100x conviction play turns into a -98%</div>
+      <div class="tweet-block">
+        <div class="tweet-block-label">How Life Felt Before AI</div>
+        <div class="tweet-block-embed">
+          <blockquote class="twitter-tweet" data-theme="dark">
+            <a href="https://twitter.com/naiivememe/status/2049321741697368380"></a>
+          </blockquote>
+        </div>
       </div>
 
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">you watch a token pump 5 minutes after you sold</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">the chart was flat for 2 hours and you still watched every second</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">you ape a token because the pfp looked trustworthy</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">you tell yourself 'last trade of the night' at 1am and it's now 5am</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">someone in the CT replies says 'told you' after the rug</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">you refresh dexscreener 47 times and the chart moved 0.2%</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">the dev's wallet is the entire bubble map and you bought anyway</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">everything you do for a living claude does for free now</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">you explain to your family what you do and they still don't get it</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">your portfolio is your personality and both are down bad</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">you realize the only notifications you get are from phantom</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">someone asks what your plans are and the honest answer is 'watching charts'</div>
-      </div>
-
-      <div class="feels-block">
-        <div class="feels-label">how it feels when</div>
-        <div class="feels-phrase">you open your wallet and the balance is a phone number. from a small country.</div>
+      <div class="tweet-block">
+        <div class="tweet-block-label">How Life Felt Before AI</div>
+        <div class="tweet-block-embed">
+          <blockquote class="twitter-tweet" data-theme="dark">
+            <a href="https://twitter.com/NoahKingJr/status/2037357561499070494"></a>
+          </blockquote>
+        </div>
       </div>
 
     </div>
@@ -751,7 +711,7 @@
   <section class="how-to-buy">
     <div class="how-to-buy-inner">
       <div class="section-label">start</div>
-      <h2 class="section-title">How To Buy $feels</h2>
+      <h2 class="section-title">How To Buy $life</h2>
 
       <div class="buy-step">
         <div class="step-number">1</div>
@@ -780,8 +740,8 @@
       <div class="buy-step">
         <div class="step-number">4</div>
         <div class="step-content">
-          <div class="step-title">Swap for $feels</div>
-          <div class="step-desc">Paste the contract address. Swap. Welcome to the feeling.</div>
+          <div class="step-title">Swap for $life</div>
+          <div class="step-desc">Paste the contract address. Swap. Welcome to life before AI.</div>
         </div>
       </div>
 
@@ -793,17 +753,20 @@
     <img src="./static/hero.png" alt="" class="footer-bg">
     <div class="footer-overlay"></div>
     <div class="footer-content">
-      <div class="footer-title" id="footer-title">it all feels the same<span class="dot">.</span></div>
+      <div class="footer-title" id="footer-title">before AI<span class="dot">.</span></div>
       <div class="footer-links">
         <a href="#" class="footer-link" id="footer-twitter">Twitter</a>
         <a href="#" class="footer-link" id="footer-community">Community</a>
       </div>
-      <div class="footer-bottom">feels on solana</div>
+      <div class="footer-bottom">life on solana</div>
     </div>
   </footer>
 
   <!-- Twitter Widget -->
-  <script async src="https://platform.twitter.com/widgets.js"></script>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+  <!-- Reddit Widget -->
+  <script async src="https://embed.reddit.com/widgets.js" charset="UTF-8"></script>
 
   <script>
     // ========== CONFIG ==========
@@ -812,8 +775,7 @@
       twitterUrl: "https://twitter.com/PASTE_HANDLE_HERE",
       communityUrl: "https://twitter.com/i/communities/PASTE_ID_HERE",
       buyUrl: "https://jup.ag/swap/SOL-PASTE_CA_HERE",
-      ticker: "feels",
-      tweetEmbedId: "2031035808308732183"
+      ticker: "life"
     };
 
     let CONFIG = { ...DEFAULT_CONFIG };
@@ -855,15 +817,6 @@
       // Buy button
       const btnBuy = document.getElementById('btn-buy');
       if (btnBuy && CONFIG.buyUrl) btnBuy.href = CONFIG.buyUrl;
-
-      // Tweet embed
-      if (CONFIG.tweetEmbedId && CONFIG.tweetEmbedId !== DEFAULT_CONFIG.tweetEmbedId) {
-        const tweetEmbed = document.getElementById('tweet-embed');
-        if (tweetEmbed) {
-          const link = tweetEmbed.querySelector('a');
-          if (link) link.href = `https://twitter.com/x/status/${CONFIG.tweetEmbedId}`;
-        }
-      }
     }
 
     // ========== RAIN ==========
@@ -902,9 +855,9 @@
         });
       }, { threshold: 0.15 });
 
-      // Feels blocks — staggered
-      document.querySelectorAll('.feels-block').forEach((block, i) => {
-        block.dataset.delay = i * 80;
+      // Tweet blocks — staggered
+      document.querySelectorAll('.tweet-block').forEach((block, i) => {
+        block.dataset.delay = i * 120;
         observer.observe(block);
       });
 
@@ -914,9 +867,9 @@
         observer.observe(step);
       });
 
-      // Tweet wrapper
-      const tweetWrapper = document.getElementById('tweet-wrapper');
-      if (tweetWrapper) observer.observe(tweetWrapper);
+      // Reddit wrapper
+      const redditWrapper = document.getElementById('reddit-wrapper');
+      if (redditWrapper) observer.observe(redditWrapper);
 
       // Footer title
       const footerTitle = document.getElementById('footer-title');
